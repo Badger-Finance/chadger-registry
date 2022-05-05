@@ -21,7 +21,7 @@ def main():
     dev = connect_account()
 
     # for the fantom chain
-    pricing_calculator_impl = ""
+    pricing_calculator_impl = "0xb9Ba04eEcAb6Bb6e2b18c3DC39fF58387ca4CadA"
     deterministic_factory = "0xC497AD0000790cfE90F4aD107501eFE7c5762B36"
     assert len(deterministic_factory) != 0
     quote_usd_token = "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75" #usdc ftm
@@ -46,8 +46,8 @@ def main():
         pricing_calculator_impl = PriceCalculator.at(pricing_calculator_impl)
 
     salt = web3.keccak(text=pricing_calculator_salt)
-    data = pricing_calculator_impl.initialize.encode_input(dev, "0x6a1122A449f3A4cB7203A49fa6Af32B97d329E73")
-    tx = deterministic_factory.deploy(salt, 0, pricing_calculator_impl, "0xbf50C5ADBe89b8C61DF4e0D8aFC44CAF87343C00", data, {"from": dev})
+    data = pricing_calculator_impl.initialize.encode_input(dev, "0x6a1122A449f3A4cB7203A49fa6Af32B97d329E73", "0xC80755D8eCa309FD241621e86216bCb6cC6f5849")
+    deterministic_factory.deploy(salt, 0, pricing_calculator_impl, "0xbf50C5ADBe89b8C61DF4e0D8aFC44CAF87343C00", data, {"from": dev})
 
     # print("Pricing Calculator Proxy deployed at", tx.return_value)
 

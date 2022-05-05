@@ -2,7 +2,6 @@
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin-contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/math/Math.sol";
@@ -28,19 +27,30 @@ contract PriceCalculator {
     }
 
     address public onChainFetcher;
+    address public onChainLpFetcher;
     // tokenAddress => oracleAddress
     mapping(address => address) public oracles;
 
-    function initialize(address _governance, address _onChainFetcher) external {
+    function initialize(
+        address _governance,
+        address _onChainFetcher,
+        address _onChainLpFetcher
+    ) external {
         require(governance == address(0), "initialized");
         require(_onChainFetcher != address(0), "ER1");
         governance = _governance;
         onChainFetcher = _onChainFetcher;
+        onChainLpFetcher = _onChainLpFetcher;
     }
 
     function setOnChainFetcher(address _onChainFetcher) external onlyGov {
         require(_onChainFetcher != address(0), "ER1");
         onChainFetcher = _onChainFetcher;
+    }
+
+    function setOnChainLpFetcher(address _onChainLpFetcher) external onlyGov {
+        require(_onChainLpFetcher != address(0), "ER1");
+        onChainLpFetcher = _onChainLpFetcher;
     }
 
     /// @notice add the oracle address for the token for better price calculation
@@ -68,14 +78,16 @@ contract PriceCalculator {
         );
     }
 
-    function tokenPriceInUSD(address tokenAddress, uint256 amount)
-        external
-        view
-        returns (uint256)
-    {
+    function tokenPriceInUSD(
+        address tokenAddress,
+        uint256 amount,
+        bool isLp
+    ) external view returns (uint256) {
         address oracle = oracles[tokenAddress];
 
-        uint256 pairPrice = oracleValueOf(onChainFetcher, tokenAddress, amount);
+        uint256 pairPrice = isLp
+            ? oracleValueOf(onChainLpFetcher, tokenAddress, amount)
+            : oracleValueOf(onChainFetcher, tokenAddress, amount);
 
         if (oracle == address(0)) {
             return pairPrice;

@@ -26,7 +26,7 @@ The Chadger Contract uses the tokenPriceInUSD() method in the PriceCalculator.so
 
 The PriceCalculator uses a combination of oracle & onchain dex pricing to calculate the usd price for a token.
 
-For any token, the PriceCalculator owner first needs to call the addFeeds() method to add a PriceFeed struct for a token address. The PriceFeed struct needs to contain either of "oracleAddress" or "onChainFetcher" or both. If both the provided then the contract will select the best price from both or else just use the one that is provided.
+The contract owner can call the addFeeds() method to add a oracle address for a token. If both the provided then the contract will select the best price from both. If not provided, then the contract will just use the onChainPriceFetcher.
 
 <strong>oracleAddress</strong>: This needs to be an implementation of either the "MarketOracle.sol" or the "OffChainPriceOracle.sol" contracts.
 
@@ -76,14 +76,14 @@ Chains deployed:
 | MarketOracle          | [0x1e6485E6cff4777291e27c5b2653649A811E3c12](https://ftmscan.com/address/0x1e6485E6cff4777291e27c5b2653649A811E3c12) |
 | OffChainPriceOracle   | [0xD94b716eF115b2BEaf988a0f7E9390C39459c572](https://ftmscan.com/address/0xD94b716eF115b2BEaf988a0f7E9390C39459c572) |
 | OnChainPriceFetcher   | [0x6a1122A449f3A4cB7203A49fa6Af32B97d329E73](https://ftmscan.com/address/0x6a1122A449f3A4cB7203A49fa6Af32B97d329E73) |
-| PriceCalculator Logic | [0x7bEF07e49d1555F154E4AB8Fb6F1Dc5e53dA524E](https://ftmscan.com/address/0x7bEF07e49d1555F154E4AB8Fb6F1Dc5e53dA524E) |
-| PriceCalculator Proxy | [0x37ae9aeFf596cB761517B2FD00a976658437B032](https://ftmscan.com/address/0x37ae9aeFf596cB761517B2FD00a976658437B032) |
+| PriceCalculator Logic | [0xb9Ba04eEcAb6Bb6e2b18c3DC39fF58387ca4CadA](https://ftmscan.com/address/0xb9Ba04eEcAb6Bb6e2b18c3DC39fF58387ca4CadA) |
+| PriceCalculator Proxy | [0x71c3BE0B98726318Fd6A3f0901e8d0B9a01fceEb](https://ftmscan.com/address/0x71c3BE0B98726318Fd6A3f0901e8d0B9a01fceEb) |
 | LPPriceCalculator     | [0xC80755D8eCa309FD241621e86216bCb6cC6f5849](https://ftmscan.com/address/0xC80755D8eCa309FD241621e86216bCb6cC6f5849) |
 
 3. <strong>Chadger Registry</strong> (FTM Main)
 
    | Contract               | Address                                                                                                              |
    | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-   | Chadger Registry Proxy | [0x83980cADe75375A32196E7219F3e578BFBb8F6a6](https://ftmscan.com/address/0x83980cADe75375A32196E7219F3e578BFBb8F6a6) |
-   | Chadger Registry Logic | [0x3D46708822d9A82B71BD28A93458E24e0864FA19](https://ftmscan.com/address/0x3D46708822d9A82B71BD28A93458E24e0864FA19) |
+   | Chadger Registry Proxy | [0x70e7126140acB38E3943FE29B20C6C44c436A7D0](https://ftmscan.com/address/0x70e7126140acB38E3943FE29B20C6C44c436A7D0) |
+   | Chadger Registry Logic | [0xe9559a6645aF7C3cE9D7925F9C73DA00FA1904B2](https://ftmscan.com/address/0xe9559a6645aF7C3cE9D7925F9C73DA00FA1904B2) |
    | Vault Logic            | [0xeCd8b51542CeE782d964bf25E2D0Ae1A99B2b96A](https://ftmscan.com/address/0xeCd8b51542CeE782d964bf25E2D0Ae1A99B2b96A) |

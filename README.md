@@ -35,6 +35,14 @@ However if the token is an LP token this needs to be an implementation of the "L
 
 All the above mentioned pricing files implement the IPriceFeed.sol interface, since the PriceCalculator.sol contract calls the getData() method for each to get the price.
 
+### MAJOR CHANGE
+
+Since the pricing contract couldn't we used in a decentralized way for all tokens, we decided to show the apr in terms on the native tokens without usd conversion on the chadger registry.
+
+So the apr & usd conversion methods have been removed.
+
+getExpectedAnnualYield() method has been added which returns the expected annual yield in the tokens terms.
+
 ## Setup
 
 If the tests fail due to rpc issues on fantom chain change the rpc url for the ftm-main network to "https://rpc.ftm.tools/" using

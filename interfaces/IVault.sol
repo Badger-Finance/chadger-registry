@@ -50,4 +50,6 @@ interface IVault {
     function lastHarvestedAt() external view returns (uint256);
 
     function reportAdditionalToken(address) external;
+
+    function reportHarvest(uint256 _harvestedAmount) external;
 }

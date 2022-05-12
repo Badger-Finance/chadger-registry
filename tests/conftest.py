@@ -57,12 +57,12 @@ def registry(deployer, vaultImplementation):
 ## Fund the account
 @pytest.fixture
 def token1(user1, user2):
-    WANT = "0x321162Cd933E2Be498Cd2267a90534A804051b11" #btc(fantom)
-    WHALE_ADDRESS = "0x93c08a3168fc469f3fc165cd3a471d19a37ca19e"
+    WANT = "0x658b0c7613e890EE50B8C4BC6A3f41ef411208aD" #feth (fantom)
+    WHALE_ADDRESS = "0x10f9a2b600f169f2425f9f28e7ba39773d167f7b"
     token = interface.IERC20(WANT)
     whaleBalance = token.balanceOf(accounts.at(WHALE_ADDRESS, force=True))
     token.transfer(user1, whaleBalance / 2, {"from": WHALE_ADDRESS})
-    token.transfer(user2, whaleBalance / 2, {"from": WHALE_ADDRESS})
+    token.transfer(user2, whaleBalance - token.balanceOf(user1), {"from": WHALE_ADDRESS})
     return token
 
 @pytest.fixture
@@ -71,8 +71,8 @@ def token2(user1, user2):
     WHALE_ADDRESS = "0x51D493C9788F4b6F87EAe50F555DD671c4Cf653E"
     token = interface.IERC20(WETH)
     whaleBalance = token.balanceOf(accounts.at(WHALE_ADDRESS, force=True))
-    token.transfer(user1, whaleBalance / 2, {"from": WHALE_ADDRESS})
-    token.transfer(user2, whaleBalance / 2, {"from": WHALE_ADDRESS})
+    token.transfer(user1, whaleBalance / 3, {"from": WHALE_ADDRESS})
+    token.transfer(user2, whaleBalance / 3, {"from": WHALE_ADDRESS})
     return token
 
 @pytest.fixture

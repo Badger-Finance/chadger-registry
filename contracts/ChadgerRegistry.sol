@@ -5,12 +5,14 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 import "../interfaces/IPriceCalculator.sol";
 import "../interfaces/IVault.sol";
 import "../interfaces/IStrategy.sol";
 
 contract ChadgerRegistry {
     using EnumerableSet for EnumerableSet.AddressSet;
+    using SafeMath for uint256;
 
     uint256 public constant MAX_BPS = 10_000;
 
@@ -27,9 +29,9 @@ contract ChadgerRegistry {
         address token;
         uint256 amount;
     }
-    struct TokenApr {
+    struct TokenYield {
         address token;
-        uint256 apr;
+        uint256 yield;
     }
 
     struct VaultData {
@@ -46,8 +48,8 @@ contract ChadgerRegistry {
         uint256 managementFee;
         uint256 lastHarvestedAt;
         uint256 tvl;
-        uint256 tvlInUSD;
-        TokenApr[] apr;
+        // uint256 tvlInUSD;
+        TokenYield[] yield;
     }
 
     modifier onlyGov() {
@@ -139,6 +141,7 @@ contract ChadgerRegistry {
         return list;
     }
 
+    /// @param simulatedYields this is basically the expected harvest amount till now amount since the last harvest time
     function getVaultData(address _vault, TokenAmount[] memory simulatedYields)
         public
         view
@@ -148,9 +151,6 @@ contract ChadgerRegistry {
         vaultData.vault = _vault;
         vaultData.tokenAddress = vault.token();
         vaultData.tvl = vault.balance();
-        vaultData.tvlInUSD = amountInUSD(
-            TokenAmount(vaultData.tokenAddress, vaultData.tvl)
-        );
         vaultData.strategist = vault.strategist();
         vaultData.strategy = vault.strategy();
 
@@ -166,73 +166,53 @@ contract ChadgerRegistry {
         vaultData.managementFee = vault.managementFee();
         vaultData.lastHarvestedAt = vault.lastHarvestedAt();
 
-        vaultData.apr = getTokensAPR(
+        vaultData.yield = getExpectedAnnualYield(
             simulatedYields,
             vaultData.lastHarvestedAt,
-            vaultData.tvlInUSD
+            vaultData.tvl
         );
     }
 
     function getVaultDepositorData(address _vault, address depositor)
         public
         view
-        returns (uint256 deposits, uint256 depositsInUSD)
+        returns (uint256 deposits)
     {
         IVault vault = IVault(_vault);
         address tokenAddress = vault.token();
         uint256 pricePerShare = vault.getPricePerFullShare();
         uint256 depositorShare = vault.balanceOf(depositor);
         deposits = (pricePerShare * depositorShare) / 1e18;
-        depositsInUSD = amountInUSD(TokenAmount(tokenAddress, deposits));
     }
 
-    function amountInUSD(TokenAmount memory tokenAmount)
-        public
-        view
-        returns (uint256 amount)
-    {
-        require(priceCalculator != address(0), "priceCalculator not set yet");
-        if (tokenAmount.amount == 0) {
-            return 0;
-        } else {
-            amount = IPriceCalculator(priceCalculator).tokenPriceInUSD(
-                tokenAmount.token,
-                tokenAmount.amount
-            );
-        }
-    }
-
-    function getTokensAPR(
+    function getExpectedAnnualYield(
         TokenAmount[] memory _simulatedYields,
         uint256 _lastHarvestedAt,
-        uint256 tvlInUSD
-    ) public view returns (TokenApr[] memory apr) {
-        apr = new TokenApr[](_simulatedYields.length);
-        for (uint256 i = 0; i < _simulatedYields.length; i++) {
-            apr[i].token = _simulatedYields[i].token;
-            if (tvlInUSD == 0) {
-                apr[i].apr = 0;
+        uint256 _tvl
+    ) public view returns (TokenYield[] memory yield) {
+        uint256 n = _simulatedYields.length;
+        yield = new TokenYield[](n);
+        for (uint256 i = 0; i < n; ++i) {
+            yield[i].token = _simulatedYields[i].token;
+            if (_tvl == 0) {
+                yield[i].yield = 0;
             } else {
-                apr[i].apr = calculateAPR(
-                    amountInUSD(_simulatedYields[i]),
+                yield[i].yield = _calculateAnnualYield(
+                    _simulatedYields[i].amount,
                     _lastHarvestedAt,
-                    tvlInUSD
+                    _tvl
                 );
             }
         }
     }
 
-    function calculateAPR(
-        uint256 reward,
+    function _calculateAnnualYield(
+        uint256 _reward,
         uint256 _lastHarvestedAt,
-        uint256 tvlInUSD
-    ) internal view returns (uint256 apr) {
-        require(tvlInUSD > 0, "tvlInUSD <= 0");
+        uint256 _tvl
+    ) internal view returns (uint256) {
+        require(_tvl > 0, "tvl = 0");
         require(block.timestamp > _lastHarvestedAt, "!invalid lastHarvestedAt");
-        apr =
-            (reward *
-                MAX_BPS *
-                (365 days / (block.timestamp - _lastHarvestedAt))) /
-            tvlInUSD;
+        return (_reward.mul(365 days) / (block.timestamp - _lastHarvestedAt));
     }
 }

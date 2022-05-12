@@ -131,10 +131,13 @@ contract MockStrategy is IStrategy {
             len = 2;
         }
         harvested = new TokenAmount[](len);
-        harvested[0] = TokenAmount(want, 14 * 10**18);
+        harvested[0] = TokenAmount(want, 2 * 10**18);
         if (testRewardToken != address(0)) {
-            harvested[1] = TokenAmount(testRewardToken, 8 * 10**18);
+            harvested[1] = TokenAmount(testRewardToken, 1 * 10**18);
         }
+
+        IVault(vault).reportHarvest(harvested[0].amount);
+
         return harvested;
     }
 

@@ -79,6 +79,10 @@ def test_user_can_register_vault(user2, registry, user1, token1, token2, keeper,
     assert actualExpectedYields[1][0] == token2
     assert approx(actualExpectedYields[1][1], expectedYieldToken2)
 
+    # expected yields for user1
+    actualYieldsUser1 = registry.getExpectedAnnualYield['address,address,tuple[]'](user1Vault, user1, yields)
+    assert actualYieldsUser1[0][1] == (expectedYieldToken1 * user1Vault.balanceOf(user1)) // user1Vault.totalSupply() 
+
     assert strategist == user1
     assert strategyAddr == strategy.address
     assert name == "Vault"

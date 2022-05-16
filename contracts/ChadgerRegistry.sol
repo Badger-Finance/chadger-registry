@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "../interfaces/IPriceCalculator.sol";
 import "../interfaces/IVault.sol";
 import "../interfaces/IStrategy.sol";
 
@@ -17,7 +16,6 @@ contract ChadgerRegistry {
     uint256 public constant MAX_BPS = 10_000;
 
     address public governance;
-    address public priceCalculator;
 
     address private vaultImplementation;
 
@@ -48,7 +46,6 @@ contract ChadgerRegistry {
         uint256 managementFee;
         uint256 lastHarvestedAt;
         uint256 tvl;
-        // uint256 tvlInUSD;
         TokenYield[] yield;
     }
 
@@ -57,15 +54,12 @@ contract ChadgerRegistry {
         _;
     }
 
-    function initialize(
-        address _governance,
-        address _vaultImplementation,
-        address _priceCalculator
-    ) public {
+    function initialize(address _governance, address _vaultImplementation)
+        public
+    {
         require(governance == address(0));
         governance = _governance;
         vaultImplementation = _vaultImplementation;
-        priceCalculator = _priceCalculator;
     }
 
     function setVaultImplementation(address _vaultImplementation)
@@ -73,10 +67,6 @@ contract ChadgerRegistry {
         onlyGov
     {
         vaultImplementation = _vaultImplementation;
-    }
-
-    function setPriceCalculator(address _priceCalculator) public onlyGov {
-        priceCalculator = _priceCalculator;
     }
 
     function setGovernance(address _newGov) public onlyGov {
@@ -202,6 +192,37 @@ contract ChadgerRegistry {
                     _lastHarvestedAt,
                     _tvl
                 );
+            }
+        }
+    }
+
+    /// @notice returns the expected annual yield for an account given simulatedYields since last harvest
+    function getExpectedAnnualYield(
+        address _vault,
+        address _account,
+        TokenAmount[] memory _simulatedYields
+    ) public view returns (TokenYield[] memory yield) {
+        uint256 shares = IVault(_vault).balanceOf(_account);
+        uint256 totalShares = IVault(_vault).totalSupply();
+        uint256 tvl = IVault(_vault).balance();
+        uint256 lastHarvestedAt = IVault(_vault).lastHarvestedAt();
+
+        uint256 n = _simulatedYields.length;
+        yield = new TokenYield[](n);
+        for (uint256 i = 0; i < n; ++i) {
+            yield[i].token = _simulatedYields[i].token;
+            if (tvl == 0) {
+                yield[i].yield = 0;
+            } else {
+                yield[i].yield = shares
+                    .mul(
+                        _calculateAnnualYield(
+                            _simulatedYields[i].amount,
+                            lastHarvestedAt,
+                            tvl
+                        )
+                    )
+                    .div(totalShares);
             }
         }
     }

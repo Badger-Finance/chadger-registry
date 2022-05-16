@@ -8,7 +8,7 @@ SPOOKYSWAP_ROUTER = "0xF491e7B69E4244ad4002BC14e878a34207E38c29"
 SUSHISWAP_ROUTER= "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"
 
 pricing_calculator_salt = "PricingCalculator v0.005"
-chadger_registry_salt = "ChadgerRegistry v0.004"
+chadger_registry_salt = "ChadgerRegistry v0.005"
 
 # ftm chain
 btc = "0x321162Cd933E2Be498Cd2267a90534A804051b11"

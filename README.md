@@ -92,6 +92,6 @@ Chains deployed:
 
    | Contract               | Address                                                                                                              |
    | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-   | Chadger Registry Proxy | [0x70e7126140acB38E3943FE29B20C6C44c436A7D0](https://ftmscan.com/address/0x70e7126140acB38E3943FE29B20C6C44c436A7D0) |
-   | Chadger Registry Logic | [0xe9559a6645aF7C3cE9D7925F9C73DA00FA1904B2](https://ftmscan.com/address/0xe9559a6645aF7C3cE9D7925F9C73DA00FA1904B2) |
+   | Chadger Registry Proxy | [0x0B5CB2aED6d52171222cb6Ef078148714C712776](https://ftmscan.com/address/0x0B5CB2aED6d52171222cb6Ef078148714C712776) |
+   | Chadger Registry Logic | [0xCcd0eb75586dE58487E8d73f2CCDb6C323e32C33](https://ftmscan.com/address/0xCcd0eb75586dE58487E8d73f2CCDb6C323e32C33) |
    | Vault Logic            | [0xeCd8b51542CeE782d964bf25E2D0Ae1A99B2b96A](https://ftmscan.com/address/0xeCd8b51542CeE782d964bf25E2D0Ae1A99B2b96A) |

@@ -38,7 +38,5 @@ def test_deploy_strategies():
 
     print(vaults)
 
-    print(registry.amountInUSD((wftm, 1e18)))
-
 
 

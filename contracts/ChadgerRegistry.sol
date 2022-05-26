@@ -81,7 +81,7 @@ contract ChadgerRegistry {
         address _badgerTree,
         string memory _name,
         string memory _symbol,
-        uint256[4] memory _feeConfig
+        uint256[4] memory _feeConfig //perfGov, perfStrategist, withdrawalFee, mgmtFee
     ) public returns (address) {
         require(
             vaultImplementation != address(0),
@@ -91,11 +91,11 @@ contract ChadgerRegistry {
         address user = msg.sender;
         IVault(vault).initialize(
             _token,
-            user,
+            user, // Governance
             _keeper,
             _guardian,
             _treasury,
-            user,
+            user, // Strategist
             _badgerTree,
             _name,
             _symbol,

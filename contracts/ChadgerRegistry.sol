@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
+
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
@@ -17,7 +18,7 @@ contract ChadgerRegistry {
 
     address public governance;
 
-    address private vaultImplementation;
+    address public vaultImplementation;
 
     EnumerableSet.AddressSet private strategists;
     mapping(address => EnumerableSet.AddressSet) private vaults;
@@ -54,10 +55,7 @@ contract ChadgerRegistry {
         _;
     }
 
-    function initialize(address _governance, address _vaultImplementation)
-        public
-    {
-        require(governance == address(0));
+    constructor(address _governance, address _vaultImplementation) public {
         governance = _governance;
         vaultImplementation = _vaultImplementation;
     }

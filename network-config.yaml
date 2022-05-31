@@ -1,0 +1,9 @@
+live:
+  - name: Arbitrum Main Verify
+    networks:
+      - name: Mainnet Verify (Infura)
+        chainid: 42161
+        id: arbitrum-main-verify
+        host: https://arbitrum-mainnet.infura.io/v3/$WEB3_INFURA_PROJECT_ID
+        explorer: https://api.arbiscan.io/api
+        multicall2: "0x7A7443F8c577d537f1d8cD4a629d40a3148Dd7ee"
